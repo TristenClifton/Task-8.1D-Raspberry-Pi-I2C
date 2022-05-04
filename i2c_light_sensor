@@ -1,0 +1,33 @@
+import smbus
+import time
+
+DEVICE     = 0x23 # Default device I2C address
+
+CONTINUOUS_HIGH_RES_MODE_2 = 0x11
+# Start measurement at 1lx resolution. Time typically 120ms
+
+bus = smbus.SMBus(1)  # Rev 2 Pi uses 1
+
+
+
+while True:
+	#read i2c bus
+	data = bus.read_i2c_block_data(0x23,0x11)
+	#convert to decimal
+	lightLevel = (data[1] + (256 * data[0])) / 1.2
+	
+	
+	#print("Light Level : " + format(lightLevel,'.2f') + " lx")
+	if(lightLevel<25):
+		print("too dark")
+	elif(lightLevel<75):
+		print("dark")
+	elif(lightLevel<125):
+		print("medium")
+	elif(lightLevel<175):
+		print("bright")
+	else:
+		print("too bright")
+			
+	
+	time.sleep(0.5)
